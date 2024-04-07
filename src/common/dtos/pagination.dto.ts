@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
-import { IsOptional, IsPositive, Min } from 'class-validator';
+import { IsIn, IsOptional, IsPositive, Min } from 'class-validator';
+import { TodosPriorityEnum } from 'src/todos/enums';
 
 export class PaginationDto {
   @IsOptional()
@@ -11,4 +12,9 @@ export class PaginationDto {
   @Min(0)
   @Type(() => Number)
   offset?: number;
+
+  @IsOptional()
+  @IsIn(['LOW', 'MEDIUM', 'HIGH', 'ALL'])
+  @Type(() => String)
+  priority: TodosPriorityEnum;
 }

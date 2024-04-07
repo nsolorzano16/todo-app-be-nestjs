@@ -10,6 +10,7 @@ import { CreateTodoDto } from './dtos/create-todo.dto';
 import { User } from 'src/auth/entities/user.entity';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { UpdateTodoDTO } from './dtos/update-todo.dto';
+import { TodosPriorityEnum } from './enums';
 
 @Injectable()
 export class TodosService {
@@ -34,15 +35,19 @@ export class TodosService {
 
   async getAll(paginationDto: PaginationDto, user: User) {
     try {
-      const { offset = 0, limit = 10 } = paginationDto;
+      const { offset = 0, limit = 10, priority } = paginationDto;
+      let where: any = {
+        user: { id: user.id },
+      };
+
+      if (priority && priority !== TodosPriorityEnum.ALL) {
+        // Filter by priority if specified
+        where = { ...where, priority };
+      }
       const todos = await this.todosRepository.find({
         take: limit,
         skip: offset,
-        where: {
-          user: {
-            id: user.id,
-          },
-        },
+        where,
       });
       return todos;
     } catch (error) {
